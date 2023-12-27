@@ -113,7 +113,7 @@ class _TrendingMoviesPageState extends State<TrendingMoviesPage> {
 
     return InkWell(
       onTap: () {
-        context.go(NavigationRoutes.MOVIE_DETAIL_ROUTE, extra: movie);
+        context.go(NavigationRoutes.TRENDING_MOVIE_DETAIL_ROUTE, extra: movie);
       },
       child: SizedBox(
         width: MediaQuery.of(context).size.width,

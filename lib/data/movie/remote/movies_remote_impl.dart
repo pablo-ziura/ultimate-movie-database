@@ -1,5 +1,5 @@
 import 'package:ultimate_movie_database/data/movie/remote/model/movie_remote_model.dart';
-import 'package:ultimate_movie_database/data/movie/remote/model/network_response_model.dart';
+import 'package:ultimate_movie_database/data/movie/remote/model/movies_network_response_model.dart';
 import 'package:ultimate_movie_database/data/remote/error/remote_error_mapper.dart';
 import 'package:ultimate_movie_database/data/remote/network_client.dart';
 import 'package:ultimate_movie_database/data/remote/network_constants.dart';
@@ -13,7 +13,7 @@ class MoviesRemoteImpl {
   Future<List<MovieRemoteModel>> getTrendingWeekMovies() async {
     try {
       final response = await _networkClient.dio.get(
-        NetworkConstants.WEEK_TRENDING_MOVIES_PATH,
+        NetworkConstants.WEEK_TRENDING_MOVIES_URL,
         queryParameters: {'api_key': NetworkConstants.API_KEY},
       );
 
