@@ -7,7 +7,7 @@ import 'package:ultimate_movie_database/di/app_modules.dart';
 import 'package:ultimate_movie_database/model/movie.dart';
 import 'package:ultimate_movie_database/ui/model/resource_state.dart';
 import 'package:ultimate_movie_database/ui/navigation/navigation_routes.dart';
-import 'package:ultimate_movie_database/ui/views/trending_movies/viewmodel/movies_view_model.dart';
+import 'package:ultimate_movie_database/ui/views/trending_movies/viewmodel/trending_movies_view_model.dart';
 import 'package:ultimate_movie_database/ui/widget/error/error_view.dart';
 import 'package:ultimate_movie_database/ui/widget/loading/loading_view.dart';
 
@@ -19,7 +19,8 @@ class TrendingMoviesPage extends StatefulWidget {
 }
 
 class _TrendingMoviesPageState extends State<TrendingMoviesPage> {
-  final MoviesViewModel _moviesViewModel = inject<MoviesViewModel>();
+  final TrendingMoviesViewModel _moviesViewModel =
+      inject<TrendingMoviesViewModel>();
   List<Movie> _movies = [];
 
   @override
@@ -108,24 +109,36 @@ class _TrendingMoviesPageState extends State<TrendingMoviesPage> {
   }
 
   Widget _buildMovieItem(Movie movie, BuildContext context) {
-    var imageUrl = NetworkConstants.BASE_URL_IMAGE + movie.posterPath;
+    var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
+
+    Widget imageWidget;
+    if (movie.posterPath != null && movie.posterPath!.isNotEmpty) {
+      imageWidget = Image.network(
+        NetworkConstants.BASE_URL_IMAGE + movie.posterPath!,
+        fit: BoxFit.cover,
+        width: screenWidth,
+        height: screenHeight,
+      );
+    } else {
+      imageWidget = Image.asset(
+        'assets/img/image_not_available.png',
+        fit: BoxFit.cover,
+        width: screenWidth,
+        height: screenHeight,
+      );
+    }
 
     return InkWell(
       onTap: () {
         context.go(NavigationRoutes.TRENDING_MOVIE_DETAIL_ROUTE, extra: movie);
       },
       child: SizedBox(
-        width: MediaQuery.of(context).size.width,
+        width: screenWidth,
         height: screenHeight,
         child: Stack(
           children: [
-            Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
-              width: MediaQuery.of(context).size.width,
-              height: screenHeight,
-            ),
+            imageWidget,
             Positioned(
               child: Container(
                 height: screenHeight,

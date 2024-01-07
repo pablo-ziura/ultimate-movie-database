@@ -5,13 +5,13 @@ import 'package:ultimate_movie_database/model/movie.dart';
 import 'package:ultimate_movie_database/ui/base/base_view_model.dart';
 import 'package:ultimate_movie_database/ui/model/resource_state.dart';
 
-class MoviesViewModel extends BaseViewModel {
+class TrendingMoviesViewModel extends BaseViewModel {
   final MoviesRepository _moviesRepository;
 
   final StreamController<ResourceState<List<Movie>>>
       getTrendingWeekMoviesState = StreamController();
 
-  MoviesViewModel({required MoviesRepository moviesRepository})
+  TrendingMoviesViewModel({required MoviesRepository moviesRepository})
       : _moviesRepository = moviesRepository;
 
   @override

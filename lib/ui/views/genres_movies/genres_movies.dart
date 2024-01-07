@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ultimate_movie_database/di/app_modules.dart';
 import 'package:ultimate_movie_database/model/genre.dart';
 import 'package:ultimate_movie_database/ui/model/resource_state.dart';
-import 'package:ultimate_movie_database/ui/views/search_page/viewmodel/genres_view_model.dart';
+import 'package:ultimate_movie_database/ui/views/genres_movies/viewmodel/genres_view_model.dart';
 import 'package:ultimate_movie_database/ui/widget/error/error_view.dart';
 import 'package:ultimate_movie_database/ui/widget/loading/loading_view.dart';
 

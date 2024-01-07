@@ -6,8 +6,8 @@ import 'package:ultimate_movie_database/ui/views/favorite_movies/favorite_movies
 import 'package:ultimate_movie_database/ui/views/genres_movies/genres_movies.dart';
 import 'package:ultimate_movie_database/ui/views/home_page/home_page.dart';
 import 'package:ultimate_movie_database/ui/views/search_page/search_page.dart';
-import 'package:ultimate_movie_database/ui/views/trending_movies/movie_detail_page.dart';
 import 'package:ultimate_movie_database/ui/views/trending_movies/trending_movies_page.dart';
+import 'package:ultimate_movie_database/ui/widget/movie_detail/movie_detail_page.dart';
 
 class NavigationRoutes {
   // Routes
@@ -20,6 +20,9 @@ class NavigationRoutes {
 
   static const String TRENDING_MOVIE_DETAIL_ROUTE =
       "$TRENDING_MOVIES_ROUTE/$_MOVIE_DETAIL_PATH";
+
+  static const String SEARCH_PAGE_MOVIE_DETAIL_ROUTE =
+      "$SEARCH_PAGE_ROUTE/$_MOVIE_DETAIL_PATH";
 
   //Paths
 
@@ -50,6 +53,13 @@ final GoRouter router =
           GoRoute(
             path: NavigationRoutes.SEARCH_PAGE_ROUTE,
             builder: (context, state) => const SearchPage(),
+            routes: [
+              GoRoute(
+                path: NavigationRoutes._MOVIE_DETAIL_PATH,
+                builder: (context, state) =>
+                    MovieDetailPage(movie: state.extra as Movie),
+              )
+            ],
           )
         ]),
         StatefulShellBranch(routes: [

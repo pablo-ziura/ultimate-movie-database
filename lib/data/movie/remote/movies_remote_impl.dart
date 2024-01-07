@@ -28,4 +28,28 @@ class MoviesRemoteImpl {
       throw RemoteErrorMapper.getException(e);
     }
   }
+
+  Future<List<MovieRemoteModel>> getMoviesByTitle(String movieTitle,
+      {int page = 1}) async {
+    try {
+      final response = await _networkClient.dio.get(
+        NetworkConstants.SEARCH_MOVIE_URL,
+        queryParameters: {
+          'api_key': NetworkConstants.API_KEY,
+          'query': movieTitle,
+          'page': page,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        MoviesNetworkResponse moviesResponse =
+            MoviesNetworkResponse.fromMap(response.data);
+        return moviesResponse.results;
+      } else {
+        throw Exception('Error al obtener películas: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw RemoteErrorMapper.getException(e);
+    }
+  }
 }

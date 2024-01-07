@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:ultimate_movie_database/data/remote/network_constants.dart';
 import 'package:ultimate_movie_database/di/app_modules.dart';
-import 'package:ultimate_movie_database/model/genre.dart';
+import 'package:ultimate_movie_database/model/movie.dart';
 import 'package:ultimate_movie_database/ui/model/resource_state.dart';
-import 'package:ultimate_movie_database/ui/views/search_page/viewmodel/genres_view_model.dart';
+import 'package:ultimate_movie_database/ui/navigation/navigation_routes.dart';
+import 'package:ultimate_movie_database/ui/views/search_page/viewmodel/search_page_view_model.dart';
 import 'package:ultimate_movie_database/ui/widget/error/error_view.dart';
 import 'package:ultimate_movie_database/ui/widget/loading/loading_view.dart';
 
@@ -14,62 +18,63 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  final GenresViewModel _genresViewModel = inject<GenresViewModel>();
   final TextEditingController _movieTitleController = TextEditingController();
-  String _selectedGenre = '';
-  List<Genre> _genres = [];
-
-  void _searchMovie() {
-    final String title = _movieTitleController.text;
-    final String genre = _selectedGenre;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Título: $title, Género: $genre'),
-      ),
-    );
-  }
+  final SearchMovieViewModel _viewModel = inject<SearchMovieViewModel>();
 
   @override
   void initState() {
     super.initState();
-    _genresViewModel.getGenresState.stream.listen((state) {
+    _viewModel.getMoviesByTitleState.stream.listen((state) {
       switch (state.status) {
         case Status.LOADING:
-          LoadingView.show(context);
+          if (_viewModel.pagingController.nextPageKey == 1) {
+            LoadingView.show(context);
+          }
           break;
         case Status.SUCCESS:
           LoadingView.hide();
-          setState(() {
-            _genres = state.data!;
-            if (_genres.isNotEmpty) {
-              _selectedGenre = _genres.first.name;
-            }
-          });
           break;
         case Status.ERROR:
           LoadingView.hide();
           ErrorView.show(context, state.exception!.toString(), () {
-            _genresViewModel.fetchMovieGenres();
+            _viewModel.fetchMoviesByTitle(_movieTitleController.text,
+                _viewModel.pagingController.nextPageKey ?? 1);
           });
           break;
       }
     });
-    _genresViewModel.fetchMovieGenres();
+
+    _viewModel.pagingController.addPageRequestListener((pageKey) {
+      _viewModel.fetchMoviesByTitle(_movieTitleController.text, pageKey);
+    });
+  }
+
+  void _searchMovie() {
+    final String title = _movieTitleController.text;
+    if (title.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('The search query can not be empty'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+    _viewModel.pagingController.refresh();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(children: [
-        Positioned(
-          top: MediaQuery.of(context).padding.top,
-          left: 0,
-          right: 0,
-          child: const Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Text(
+      body: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top,
+                left: 10.0,
+                right: 10.0),
+            child: const Text(
               "SEARCH FOR YOUR MOVIE",
               style: TextStyle(
                 fontSize: 36,
@@ -91,54 +96,80 @@ class _SearchPageState extends State<SearchPage> {
               textAlign: TextAlign.center,
             ),
           ),
-        ),
-        Positioned(
-          top: MediaQuery.of(context).padding.top + 200,
-          left: 20,
-          right: 20,
-          child: Column(
-            children: [
-              TextField(
-                controller: _movieTitleController,
-                decoration: const InputDecoration(
-                  hintText: 'Movie Title',
-                  fillColor: Colors.white,
-                  filled: true,
-                ),
+          const SizedBox(height: 25),
+          Container(
+            padding: const EdgeInsetsDirectional.all(15),
+            child: TextField(
+              controller: _movieTitleController,
+              decoration: const InputDecoration(
+                hintText: 'Movie Title',
+                fillColor: Colors.white,
+                filled: true,
               ),
-              DropdownButton<String>(
-                value: _selectedGenre,
-                onChanged: (newValue) {
-                  setState(() {
-                    _selectedGenre = newValue!;
-                  });
-                },
-                dropdownColor: Colors.black,
-                items: _genres.map<DropdownMenuItem<String>>((Genre genre) {
-                  return DropdownMenuItem<String>(
-                    value: genre.name,
-                    child: Text(
-                      genre.name,
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  );
-                }).toList(),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: _searchMovie,
+            child: const Text('SEARCH'),
+          ),
+          Expanded(
+            child: PagedListView<int, Movie>(
+              pagingController: _viewModel.pagingController,
+              builderDelegate: PagedChildBuilderDelegate<Movie>(
+                itemBuilder: (context, item, index) =>
+                    _buildMovieListItem(item),
+                noItemsFoundIndicatorBuilder: (context) => Container(),
               ),
-              ElevatedButton(
-                onPressed: _searchMovie,
-                child: const Text('SEARCH'),
-              ),
-            ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMovieListItem(Movie movie) {
+    Widget imageWidget;
+    if (movie.backdropPath != null && movie.backdropPath!.isNotEmpty) {
+      imageWidget = Image.network(
+        NetworkConstants.BASE_URL_IMAGE + movie.backdropPath!,
+        fit: BoxFit.cover,
+        height: 150,
+        width: 100,
+      );
+    } else {
+      imageWidget = Image.asset(
+        'assets/img/image_not_available.png',
+        fit: BoxFit.cover,
+        height: 150,
+        width: 100,
+      );
+    }
+
+    return InkWell(
+      onTap: () {
+        context.go(NavigationRoutes.SEARCH_PAGE_MOVIE_DETAIL_ROUTE,
+            extra: movie);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: ListTile(
+          title: Text(
+            movie.title,
+            style: const TextStyle(color: Colors.white),
+          ),
+          leading: ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: imageWidget,
           ),
         ),
-      ]),
+      ),
     );
   }
 
   @override
   void dispose() {
-    _genresViewModel.dispose();
     _movieTitleController.dispose();
+    _viewModel.dispose();
     super.dispose();
   }
 }

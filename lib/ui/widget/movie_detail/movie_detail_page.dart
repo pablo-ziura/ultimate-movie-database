@@ -32,6 +32,23 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
 Widget _buildMovieImage(BuildContext context, Movie movie) {
   var screenWidth = MediaQuery.of(context).size.width;
 
+  Widget imageWidget;
+  if (movie.backdropPath != null && movie.backdropPath!.isNotEmpty) {
+    imageWidget = Image.network(
+      NetworkConstants.BASE_URL_IMAGE + movie.backdropPath!,
+      fit: BoxFit.cover,
+      width: screenWidth - 10,
+      height: 250,
+    );
+  } else {
+    imageWidget = Image.asset(
+      'assets/img/image_not_available.png',
+      fit: BoxFit.cover,
+      width: screenWidth - 10,
+      height: 250,
+    );
+  }
+
   return Padding(
     padding: const EdgeInsets.fromLTRB(5.0, 30.0, 5.0, 5.0),
     child: Stack(
@@ -43,12 +60,7 @@ Widget _buildMovieImage(BuildContext context, Movie movie) {
           elevation: 5,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),
-            child: Image.network(
-              NetworkConstants.BASE_URL_IMAGE + movie.backdropPath,
-              fit: BoxFit.cover,
-              width: screenWidth - 10,
-              height: 250,
-            ),
+            child: imageWidget,
           ),
         ),
         Positioned(
@@ -102,7 +114,7 @@ Widget _buildMovieDetails(Movie movie) {
           ),
           const SizedBox(height: 10),
           Text(
-            'Release Date: ${movie.releaseDate.toLocal().toString().split(' ')[0]}',
+            'Release Date: ${movie.releaseDate}',
             style: const TextStyle(
               fontSize: 16,
               color: Colors.grey,
