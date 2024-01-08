@@ -1,6 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:go_router/go_router.dart';
+import 'package:ultimate_movie_database/model/genre.dart';
 import 'package:ultimate_movie_database/model/movie.dart';
 import 'package:ultimate_movie_database/ui/views/favorite_movies/favorite_movies.dart';
 import 'package:ultimate_movie_database/ui/views/genres_movies/genres_movies_page.dart';
@@ -26,7 +27,10 @@ class NavigationRoutes {
       "$SEARCH_PAGE_ROUTE/$_MOVIE_DETAIL_PATH";
 
   static const String TOP_MOVIES_BY_GENDER_ROUTE =
-      "$SEARCH_PAGE_ROUTE/$_TOP_MOVIES_PATH";
+      "$MOVIES_BY_GENRE_ROUTE/$_TOP_MOVIES_PATH";
+
+  static const String TOP_MOVIES_BY_GENDER_MOVIE_DETAIL_ROUTE =
+      "$MOVIES_BY_GENRE_ROUTE/$_TOP_MOVIES_PATH/$_MOVIE_DETAIL_PATH";
 
   //Paths
 
@@ -75,7 +79,15 @@ final GoRouter router = GoRouter(
               routes: [
                 GoRoute(
                   path: NavigationRoutes._TOP_MOVIES_PATH,
-                  builder: (context, state) => TopMoviesByGenderPage(),
+                  builder: (context, state) =>
+                      TopMoviesByGenderPage(genre: state.extra as Genre),
+                  routes: [
+                    GoRoute(
+                      path: NavigationRoutes._MOVIE_DETAIL_PATH,
+                      builder: (context, state) =>
+                          MovieDetailPage(movie: state.extra as Movie),
+                    )
+                  ],
                 )
               ],
             )

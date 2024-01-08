@@ -1,10 +1,9 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ultimate_movie_database/data/remote/network_constants.dart';
 import 'package:ultimate_movie_database/di/app_modules.dart';
+import 'package:ultimate_movie_database/model/genre.dart';
 import 'package:ultimate_movie_database/model/movie.dart';
 import 'package:ultimate_movie_database/ui/model/resource_state.dart';
 import 'package:ultimate_movie_database/ui/navigation/navigation_routes.dart';
@@ -13,18 +12,18 @@ import 'package:ultimate_movie_database/ui/widgets/error/error_view.dart';
 import 'package:ultimate_movie_database/ui/widgets/loading/loading_view.dart';
 
 class TopMoviesByGenderPage extends StatefulWidget {
-  const TopMoviesByGenderPage({Key? key}) : super(key: key);
+  const TopMoviesByGenderPage({Key? key, required this.genre})
+      : super(key: key);
+  final Genre genre;
 
   @override
-  State<TopMoviesByGenderPage> createState() =>
-      _TopMoviesByGenderPageState(genre: null);
+  State<TopMoviesByGenderPage> createState() => _TopMoviesByGenderPageState();
 }
 
 class _TopMoviesByGenderPageState extends State<TopMoviesByGenderPage> {
   final TopMoviesViewModel _viewModel = inject<TopMoviesViewModel>();
-  final Int? genre;
 
-  _TopMoviesByGenderPageState({required this.genre});
+  _TopMoviesByGenderPageState();
 
   @override
   void initState() {
@@ -61,12 +60,33 @@ class _TopMoviesByGenderPageState extends State<TopMoviesByGenderPage> {
       body: Column(
         children: [
           const SizedBox(height: 25),
+          Text(
+            widget.genre.name,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              shadows: [
+                Shadow(
+                  offset: const Offset(2.0, 2.0),
+                  blurRadius: 3.0,
+                  color: Colors.white.withOpacity(0.5),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 25),
           Expanded(
             child: PagedListView<int, Movie>(
               pagingController: _viewModel.pagingController,
               builderDelegate: PagedChildBuilderDelegate<Movie>(
-                itemBuilder: (context, item, index) =>
-                    _buildMovieListItem(item),
+                itemBuilder: (context, movie, index) {
+                  if (movie.genreIds.contains(widget.genre.id)) {
+                    return _buildMovieListItem(movie);
+                  } else {
+                    return Container();
+                  }
+                },
                 noItemsFoundIndicatorBuilder: (context) => Container(),
               ),
             ),
