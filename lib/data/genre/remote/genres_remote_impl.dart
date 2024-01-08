@@ -22,7 +22,7 @@ class GenresRemoteImpl {
             GenresNetworkResponse.fromMap(response.data);
         return genresResponse.genres;
       } else {
-        throw Exception('Error al obtener los géneros: ${response.statusCode}');
+        throw Exception('Error: ${response.statusCode}');
       }
     } catch (e) {
       throw RemoteErrorMapper.getException(e);

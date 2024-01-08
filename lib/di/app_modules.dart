@@ -7,6 +7,7 @@ import 'package:ultimate_movie_database/data/remote/network_client.dart';
 import 'package:ultimate_movie_database/domain/genres_repository.dart';
 import 'package:ultimate_movie_database/domain/movies_repository.dart';
 import 'package:ultimate_movie_database/ui/views/genres_movies/viewmodel/genres_view_model.dart';
+import 'package:ultimate_movie_database/ui/views/genres_movies/viewmodel/top_movies_view_model.dart';
 import 'package:ultimate_movie_database/ui/views/search_page/viewmodel/search_page_view_model.dart';
 import 'package:ultimate_movie_database/ui/views/trending_movies/viewmodel/trending_movies_view_model.dart';
 
@@ -31,6 +32,8 @@ class AppModules {
         () => TrendingMoviesViewModel(moviesRepository: inject.get()));
     inject.registerFactory(
         () => SearchMovieViewModel(moviesRepository: inject.get()));
+    inject.registerFactory(
+        () => TopMoviesViewModel(moviesRepository: inject.get()));
   }
 
   _setupGenresModule() {

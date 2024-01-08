@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ultimate_movie_database/di/app_modules.dart';
 import 'package:ultimate_movie_database/model/genre.dart';
 import 'package:ultimate_movie_database/ui/model/resource_state.dart';
+import 'package:ultimate_movie_database/ui/navigation/navigation_routes.dart';
 import 'package:ultimate_movie_database/ui/views/genres_movies/viewmodel/genres_view_model.dart';
-import 'package:ultimate_movie_database/ui/widget/error/error_view.dart';
-import 'package:ultimate_movie_database/ui/widget/loading/loading_view.dart';
+import 'package:ultimate_movie_database/ui/widgets/error/error_view.dart';
+import 'package:ultimate_movie_database/ui/widgets/loading/loading_view.dart';
 
-class MoviesByGenre extends StatefulWidget {
-  const MoviesByGenre({super.key});
+class MoviesByGenrePage extends StatefulWidget {
+  const MoviesByGenrePage({super.key});
 
   @override
-  State<MoviesByGenre> createState() => _MoviesByGenreState();
+  State<MoviesByGenrePage> createState() => _MoviesByGenrePageState();
 }
 
-class _MoviesByGenreState extends State<MoviesByGenre> {
+class _MoviesByGenrePageState extends State<MoviesByGenrePage> {
   final GenresViewModel _genresViewModel = inject<GenresViewModel>();
   List<Genre> _genres = [];
 
@@ -53,7 +55,7 @@ class _MoviesByGenreState extends State<MoviesByGenre> {
             left: 0,
             right: 0,
             child: const Padding(
-              padding: EdgeInsets.all(10.0),
+              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20),
               child: Text(
                 "TOP MOVIES BY GENRE",
                 style: TextStyle(
@@ -78,7 +80,7 @@ class _MoviesByGenreState extends State<MoviesByGenre> {
             ),
           ),
           GridView.builder(
-            padding: const EdgeInsets.only(top: 140, left: 5, right: 5),
+            padding: const EdgeInsets.only(top: 180, left: 5, right: 5),
             itemCount: _genres.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2),
@@ -86,7 +88,10 @@ class _MoviesByGenreState extends State<MoviesByGenre> {
               final genre = _genres[index];
               return Card(
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    context.go(NavigationRoutes.TOP_MOVIES_BY_GENDER_ROUTE,
+                        extra: genre);
+                  },
                   child: Center(
                     child: Text(
                       genre.name,

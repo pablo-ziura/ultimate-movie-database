@@ -8,8 +8,8 @@ import 'package:ultimate_movie_database/model/movie.dart';
 import 'package:ultimate_movie_database/ui/model/resource_state.dart';
 import 'package:ultimate_movie_database/ui/navigation/navigation_routes.dart';
 import 'package:ultimate_movie_database/ui/views/trending_movies/viewmodel/trending_movies_view_model.dart';
-import 'package:ultimate_movie_database/ui/widget/error/error_view.dart';
-import 'package:ultimate_movie_database/ui/widget/loading/loading_view.dart';
+import 'package:ultimate_movie_database/ui/widgets/error/error_view.dart';
+import 'package:ultimate_movie_database/ui/widgets/loading/loading_view.dart';
 
 class TrendingMoviesPage extends StatefulWidget {
   const TrendingMoviesPage({super.key});

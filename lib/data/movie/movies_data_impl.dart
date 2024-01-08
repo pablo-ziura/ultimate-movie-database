@@ -30,4 +30,14 @@ class MoviesDataImpl extends MoviesRepository {
       throw Exception('Error al buscar películas por título: $e');
     }
   }
+
+  @override
+  Future<List<Movie>> getTopMovies({int page = 1}) async {
+    try {
+      final remoteMovies = await _remoteImpl.getTopMovies(page: page);
+      return remoteMovies.map(MovieRemoteMapper.fromRemote).toList();
+    } catch (e) {
+      throw Exception('Error al buscar películas por título: $e');
+    }
+  }
 }
