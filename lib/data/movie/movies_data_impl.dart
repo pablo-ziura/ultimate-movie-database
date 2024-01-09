@@ -10,8 +10,11 @@ class MoviesDataImpl extends MoviesRepository {
   final MoviesRemoteImpl _remoteImpl;
   final MoviesLocalImpl _localImpl;
 
-  MoviesDataImpl(this._localImpl, {required MoviesRemoteImpl remoteImpl})
-      : _remoteImpl = remoteImpl;
+  MoviesDataImpl(
+      {required MoviesRemoteImpl remoteImpl,
+      required MoviesLocalImpl localImpl})
+      : _remoteImpl = remoteImpl,
+        _localImpl = localImpl;
 
   @override
   Future<List<Movie>> getTrendingWeekMovies() async {

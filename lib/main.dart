@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:ultimate_movie_database/di/app_modules.dart';
 import 'package:ultimate_movie_database/ui/navigation/navigation_routes.dart';
 
-void main() {
-  AppModules().setup();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AppModules().setup();
   runApp(const MainApp());
 }
 
