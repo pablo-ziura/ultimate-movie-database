@@ -127,6 +127,26 @@ Widget _buildMovieDetails(Movie movie) {
               fontSize: 16,
             ),
           ),
+          const SizedBox(height: 30),
+          GestureDetector(
+            onTap: () {
+              print('Add to want to watch list');
+            },
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.favorite, color: Colors.red),
+                SizedBox(width: 5),
+                Text(
+                  'Add to want to watch list',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.blueGrey, // Cambia el color a gris oscuro
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     ),

@@ -1,11 +1,9 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:go_router/go_router.dart';
-import 'package:ultimate_movie_database/model/genre.dart';
 import 'package:ultimate_movie_database/model/movie.dart';
 import 'package:ultimate_movie_database/ui/views/favorite_movies/favorite_movies.dart';
-import 'package:ultimate_movie_database/ui/views/genres_movies/genres_movies_page.dart';
-import 'package:ultimate_movie_database/ui/views/genres_movies/top_movies_by_gender_page.dart';
+import 'package:ultimate_movie_database/ui/views/genres_movies/top_rated_movies_movies_page.dart';
 import 'package:ultimate_movie_database/ui/views/home_page/home_page.dart';
 import 'package:ultimate_movie_database/ui/views/search_page/search_page.dart';
 import 'package:ultimate_movie_database/ui/views/trending_movies/trending_movies_page.dart';
@@ -26,16 +24,12 @@ class NavigationRoutes {
   static const String SEARCH_PAGE_MOVIE_DETAIL_ROUTE =
       "$SEARCH_PAGE_ROUTE/$_MOVIE_DETAIL_PATH";
 
-  static const String TOP_MOVIES_BY_GENDER_ROUTE =
-      "$MOVIES_BY_GENRE_ROUTE/$_TOP_MOVIES_PATH";
-
   static const String TOP_MOVIES_BY_GENDER_MOVIE_DETAIL_ROUTE =
-      "$MOVIES_BY_GENRE_ROUTE/$_TOP_MOVIES_PATH/$_MOVIE_DETAIL_PATH";
+      "$MOVIES_BY_GENRE_ROUTE/$_MOVIE_DETAIL_PATH";
 
   //Paths
 
   static const _MOVIE_DETAIL_PATH = "movie_detail";
-  static const _TOP_MOVIES_PATH = "top-rated";
 }
 
 final GoRouter router = GoRouter(
@@ -75,19 +69,12 @@ final GoRouter router = GoRouter(
           StatefulShellBranch(routes: [
             GoRoute(
               path: NavigationRoutes.MOVIES_BY_GENRE_ROUTE,
-              builder: (context, state) => const MoviesByGenrePage(),
+              builder: (context, state) => const TopRatedMoviesPage(),
               routes: [
                 GoRoute(
-                  path: NavigationRoutes._TOP_MOVIES_PATH,
+                  path: NavigationRoutes._MOVIE_DETAIL_PATH,
                   builder: (context, state) =>
-                      TopMoviesByGenderPage(genre: state.extra as Genre),
-                  routes: [
-                    GoRoute(
-                      path: NavigationRoutes._MOVIE_DETAIL_PATH,
-                      builder: (context, state) =>
-                          MovieDetailPage(movie: state.extra as Movie),
-                    )
-                  ],
+                      MovieDetailPage(movie: state.extra as Movie),
                 )
               ],
             )
