@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -114,8 +115,16 @@ class _TrendingMoviesPageState extends State<TrendingMoviesPage> {
 
     Widget imageWidget;
     if (movie.posterPath != null && movie.posterPath!.isNotEmpty) {
-      imageWidget = Image.network(
-        NetworkConstants.BASE_URL_IMAGE + movie.posterPath!,
+      imageWidget = CachedNetworkImage(
+        imageUrl: NetworkConstants.BASE_URL_IMAGE + movie.posterPath!,
+        placeholder: (context, url) => const Center(
+          child: SizedBox(
+            width: 30.0,
+            height: 30.0,
+            child: CircularProgressIndicator(),
+          ),
+        ),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
         fit: BoxFit.cover,
         width: screenWidth,
         height: screenHeight,
