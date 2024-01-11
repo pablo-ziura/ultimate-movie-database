@@ -51,8 +51,8 @@ class AppModules {
         () => TopRatedMoviesViewModel(moviesRepository: inject.get()));
     inject.registerFactory(
         () => FavoriteMoviesViewModel(moviesRepository: inject.get()));
-    inject.registerFactory(
-        () => MovieDetailViewModel(moviesRepository: inject.get()));
+    inject.registerFactory(() => MovieDetailViewModel(
+        moviesRepository: inject.get(), genresRepository: inject.get()));
   }
 
   void _setupGenresModule() {

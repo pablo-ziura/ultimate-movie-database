@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:ultimate_movie_database/data/remote/network_constants.dart';
 import 'package:ultimate_movie_database/di/app_modules.dart';
+import 'package:ultimate_movie_database/model/genre.dart';
 import 'package:ultimate_movie_database/model/movie.dart';
 import 'package:ultimate_movie_database/ui/views/movie_detail/viewmodel/movie_detail_view_model.dart';
 
@@ -23,7 +24,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   @override
   void initState() {
     super.initState();
+    _viewModel.fetchMovieGenres();
     _checkIfMovieIsInWatchList();
+    setState(() {});
   }
 
   void _checkIfMovieIsInWatchList() async {
@@ -60,7 +63,15 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   Widget _buildMovieDetails(Movie movie) {
     String buttonText =
         _isInWatchList ? 'Remove from watch list' : 'Add to want to watch list';
-    Color iconColor = _isInWatchList ? Colors.red : Colors.black;
+    Color iconColor = _isInWatchList ? Colors.red : Colors.grey;
+    List<String> genres = movie.genreIds
+        .map((id) => _viewModel.genresList
+            .firstWhere(
+              (genre) => genre.id == id,
+              orElse: () => Genre(id: -1, name: 'Unknown'),
+            )
+            .name)
+        .toList();
 
     return Card(
       color: Colors.white,
@@ -89,13 +100,6 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
               ),
             ),
             const SizedBox(height: 10),
-            Text(
-              movie.overview,
-              style: const TextStyle(
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 30),
             GestureDetector(
               onTap: () {
                 _toggleWatchList();
@@ -113,6 +117,22 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                     ),
                   ),
                 ],
+              ),
+            ),
+            const SizedBox(height: 30),
+            Text(
+              movie.overview,
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text('Genres: ${genres.join(', ')}'),
+            const SizedBox(height: 10),
+            Text(
+              'Average Vote: ${movie.voteAverage.toStringAsFixed(2)} (${movie.voteCount} votes)',
+              style: const TextStyle(
+                fontSize: 16,
               ),
             ),
           ],

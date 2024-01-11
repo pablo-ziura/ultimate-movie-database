@@ -1,12 +1,16 @@
 import 'dart:async';
 
+import 'package:ultimate_movie_database/domain/genres_repository.dart';
 import 'package:ultimate_movie_database/domain/movies_repository.dart';
+import 'package:ultimate_movie_database/model/genre.dart';
 import 'package:ultimate_movie_database/model/movie.dart';
 import 'package:ultimate_movie_database/ui/base/base_view_model.dart';
 import 'package:ultimate_movie_database/ui/model/resource_state.dart';
 
 class MovieDetailViewModel extends BaseViewModel {
   final MoviesRepository _moviesRepository;
+  final GenresRepository _genresRepository;
+  List<Genre> genresList = [];
   List<Movie> _watchListMovies = [];
 
   final StreamController<ResourceState<List<Movie>>> addToWatchListState =
@@ -18,14 +22,21 @@ class MovieDetailViewModel extends BaseViewModel {
   final StreamController<ResourceState<List<Movie>>>
       getMoviesFromWatchListState = StreamController();
 
-  MovieDetailViewModel({required MoviesRepository moviesRepository})
-      : _moviesRepository = moviesRepository;
+  final StreamController<ResourceState<List<Genre>>> getGenresState =
+      StreamController();
+
+  MovieDetailViewModel(
+      {required MoviesRepository moviesRepository,
+      required GenresRepository genresRepository})
+      : _moviesRepository = moviesRepository,
+        _genresRepository = genresRepository;
 
   @override
   void dispose() {
     addToWatchListState.close();
     removeFromWatchListState.close();
     getMoviesFromWatchListState.close();
+    getGenresState.close();
   }
 
   Future<void> addToWatchList(Movie movie) async {
@@ -65,5 +76,15 @@ class MovieDetailViewModel extends BaseViewModel {
     await fetchMoviesFromWatchList();
     return _watchListMovies
         .any((watchListMovie) => watchListMovie.id == movie.id);
+  }
+
+  fetchMovieGenres() async {
+    getGenresState.add(ResourceState.loading());
+    try {
+      genresList = await _genresRepository.getGenres();
+      getGenresState.add(ResourceState.success(genresList));
+    } catch (error) {
+      getGenresState.add(ResourceState.error(Exception(error.toString())));
+    }
   }
 }

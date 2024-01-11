@@ -11,6 +11,9 @@ class MovieRemoteModel {
   bool video;
   double voteAverage;
   int voteCount;
+  int? budget;
+  int? revenue;
+  int? runtime;
 
   MovieRemoteModel({
     this.backdropPath,
@@ -25,6 +28,9 @@ class MovieRemoteModel {
     required this.video,
     required this.voteAverage,
     required this.voteCount,
+    this.budget,
+    this.revenue,
+    this.runtime,
   });
 
   factory MovieRemoteModel.fromMap(Map<String, dynamic> json) =>
@@ -41,6 +47,9 @@ class MovieRemoteModel {
         video: json["video"],
         voteAverage: json["vote_average"]?.toDouble(),
         voteCount: json["vote_count"],
+        budget: json["budget"],
+        revenue: json["revenue"],
+        runtime: json["runtime"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -56,5 +65,37 @@ class MovieRemoteModel {
         "video": video,
         "vote_average": voteAverage,
         "vote_count": voteCount,
+        "budget": budget,
+        "revenue": revenue,
+        "runtime": runtime,
+      };
+}
+
+class ProductionCompany {
+  int id;
+  String logoPath;
+  String name;
+  String originCountry;
+
+  ProductionCompany({
+    required this.id,
+    required this.logoPath,
+    required this.name,
+    required this.originCountry,
+  });
+
+  factory ProductionCompany.fromJson(Map<String, dynamic> json) =>
+      ProductionCompany(
+        id: json["id"],
+        logoPath: json["logo_path"],
+        name: json["name"],
+        originCountry: json["origin_country"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "logo_path": logoPath,
+        "name": name,
+        "origin_country": originCountry,
       };
 }
