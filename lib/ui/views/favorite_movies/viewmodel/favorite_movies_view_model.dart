@@ -7,7 +7,6 @@ import 'package:ultimate_movie_database/ui/model/resource_state.dart';
 
 class FavoriteMoviesViewModel extends BaseViewModel {
   final MoviesRepository _moviesRepository;
-  List<Movie> _watchListMovies = [];
 
   final StreamController<ResourceState<List<Movie>>>
       getMoviesFromWatchListState = StreamController();
@@ -21,13 +20,12 @@ class FavoriteMoviesViewModel extends BaseViewModel {
   }
 
   Future<void> fetchMoviesFromWatchList() async {
-    try {
-      getMoviesFromWatchListState.add(ResourceState.loading());
-      _watchListMovies = await _moviesRepository.getMoviesFromWatchList();
-      getMoviesFromWatchListState.add(ResourceState.success(_watchListMovies));
-    } catch (e) {
-      getMoviesFromWatchListState.add(
-          ResourceState.error(e is Exception ? e : Exception(e.toString())));
-    }
+    getMoviesFromWatchListState.add(ResourceState.loading());
+    _moviesRepository
+        .getMoviesFromWatchList()
+        .then((value) =>
+            getMoviesFromWatchListState.add(ResourceState.success(value)))
+        .catchError((error) =>
+            getMoviesFromWatchListState.add(ResourceState.error(error)));
   }
 }

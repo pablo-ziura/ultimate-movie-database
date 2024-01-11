@@ -5,7 +5,10 @@ import 'package:ultimate_movie_database/data/remote/network_constants.dart';
 import 'package:ultimate_movie_database/di/app_modules.dart';
 import 'package:ultimate_movie_database/model/genre.dart';
 import 'package:ultimate_movie_database/model/movie.dart';
+import 'package:ultimate_movie_database/ui/model/resource_state.dart';
 import 'package:ultimate_movie_database/ui/views/movie_detail/viewmodel/movie_detail_view_model.dart';
+import 'package:ultimate_movie_database/ui/widgets/error/error_view.dart';
+import 'package:ultimate_movie_database/ui/widgets/loading/loading_view.dart';
 
 class MovieDetailPage extends StatefulWidget {
   const MovieDetailPage({super.key, required this.movie});
@@ -18,15 +21,34 @@ class MovieDetailPage extends StatefulWidget {
 
 class _MovieDetailPageState extends State<MovieDetailPage> {
   final MovieDetailViewModel _viewModel = inject<MovieDetailViewModel>();
-
+  List<Genre> _genres = [];
   bool _isInWatchList = false;
 
   @override
   void initState() {
     super.initState();
+    _viewModel.getGenresState.stream.listen((state) {
+      switch (state.status) {
+        case Status.LOADING:
+          LoadingView.show(context);
+          break;
+        case Status.SUCCESS:
+          LoadingView.hide();
+          setState(() {
+            _genres = state.data!;
+          });
+          break;
+        case Status.ERROR:
+          LoadingView.hide();
+          ErrorView.show(context, state.exception!.toString(), () {
+            _viewModel.fetchMovieGenres();
+          });
+          break;
+      }
+    });
     _viewModel.fetchMovieGenres();
+
     _checkIfMovieIsInWatchList();
-    setState(() {});
   }
 
   void _checkIfMovieIsInWatchList() async {
@@ -64,14 +86,8 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     String buttonText =
         _isInWatchList ? 'Remove from watch list' : 'Add to want to watch list';
     Color iconColor = _isInWatchList ? Colors.red : Colors.grey;
-    List<String> genres = movie.genreIds
-        .map((id) => _viewModel.genresList
-            .firstWhere(
-              (genre) => genre.id == id,
-              orElse: () => Genre(id: -1, name: 'Unknown'),
-            )
-            .name)
-        .toList();
+    List<Genre> selectedGenres =
+        _genres.where((genre) => movie.genreIds.contains(genre.id)).toList();
 
     return Card(
       color: Colors.white,
@@ -127,14 +143,14 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
               ),
             ),
             const SizedBox(height: 10),
-            Text('Genres: ${genres.join(', ')}'),
-            const SizedBox(height: 10),
             Text(
               'Average Vote: ${movie.voteAverage.toStringAsFixed(2)} (${movie.voteCount} votes)',
               style: const TextStyle(
                 fontSize: 16,
               ),
             ),
+            Text(
+                'Genres: ${selectedGenres.map((genre) => genre.name).join(', ')}'),
           ],
         ),
       ),

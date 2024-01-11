@@ -3,7 +3,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:ultimate_movie_database/model/movie.dart';
 import 'package:ultimate_movie_database/ui/views/favorite_movies/favorite_movies.dart';
-import 'package:ultimate_movie_database/ui/views/genres_movies/top_rated_movies_movies_page.dart';
+import 'package:ultimate_movie_database/ui/views/top_rated_movies/top_rated_movies_movies_page.dart';
 import 'package:ultimate_movie_database/ui/views/home_page/home_page.dart';
 import 'package:ultimate_movie_database/ui/views/movie_detail/movie_detail_page.dart';
 import 'package:ultimate_movie_database/ui/views/search_page/search_page.dart';

@@ -5,8 +5,7 @@ import 'package:ultimate_movie_database/model/genre.dart';
 import 'package:ultimate_movie_database/model/movie.dart';
 import 'package:ultimate_movie_database/ui/model/resource_state.dart';
 import 'package:ultimate_movie_database/ui/navigation/navigation_routes.dart';
-import 'package:ultimate_movie_database/ui/views/genres_movies/viewmodel/genres_view_model.dart';
-import 'package:ultimate_movie_database/ui/views/genres_movies/viewmodel/top_rated_movies_view_model.dart';
+import 'package:ultimate_movie_database/ui/views/top_rated_movies/viewmodel/top_rated_movies_view_model.dart';
 import 'package:ultimate_movie_database/ui/widgets/error/error_view.dart';
 import 'package:ultimate_movie_database/ui/widgets/loading/loading_view.dart';
 import 'package:ultimate_movie_database/ui/widgets/movie_list_item/movie_list_item.dart';
@@ -19,9 +18,7 @@ class TopRatedMoviesPage extends StatefulWidget {
 }
 
 class TopRatedMoviesPageState extends State<TopRatedMoviesPage> {
-  final GenresViewModel _genresViewModel = inject<GenresViewModel>();
-  final TopRatedMoviesViewModel _moviesViewModel =
-      inject<TopRatedMoviesViewModel>();
+  final TopRatedMoviesViewModel _viewModel = inject<TopRatedMoviesViewModel>();
 
   List<Genre> _genres = [];
   String? _selectedGenreId;
@@ -30,7 +27,7 @@ class TopRatedMoviesPageState extends State<TopRatedMoviesPage> {
   void initState() {
     super.initState();
     _selectedGenreId = null;
-    _genresViewModel.getGenresState.stream.listen((state) {
+    _viewModel.getGenresState.stream.listen((state) {
       switch (state.status) {
         case Status.LOADING:
           LoadingView.show(context);
@@ -44,18 +41,18 @@ class TopRatedMoviesPageState extends State<TopRatedMoviesPage> {
         case Status.ERROR:
           LoadingView.hide();
           ErrorView.show(context, state.exception!.toString(), () {
-            _genresViewModel.fetchMovieGenres();
+            _viewModel.fetchMovieGenres();
           });
           break;
       }
     });
-    _genresViewModel.fetchMovieGenres();
+    _viewModel.fetchMovieGenres();
 
-    _moviesViewModel.getMoviesByTitleState.stream.listen(
+    _viewModel.getMoviesByTitleState.stream.listen(
       (state) {
         switch (state.status) {
           case Status.LOADING:
-            if (_moviesViewModel.pagingController.nextPageKey == 1) {
+            if (_viewModel.pagingController.nextPageKey == 1) {
               LoadingView.show(context);
             }
             break;
@@ -65,16 +62,16 @@ class TopRatedMoviesPageState extends State<TopRatedMoviesPage> {
           case Status.ERROR:
             LoadingView.hide();
             ErrorView.show(context, state.exception!.toString(), () {
-              _moviesViewModel.fetchTopMovies(
-                  _moviesViewModel.pagingController.nextPageKey ?? 1);
+              _viewModel
+                  .fetchTopMovies(_viewModel.pagingController.nextPageKey ?? 1);
             });
             break;
         }
       },
     );
 
-    _moviesViewModel.pagingController.addPageRequestListener((pageKey) {
-      _moviesViewModel.fetchTopMovies(pageKey);
+    _viewModel.pagingController.addPageRequestListener((pageKey) {
+      _viewModel.fetchTopMovies(pageKey);
     });
   }
 
@@ -137,7 +134,7 @@ class TopRatedMoviesPageState extends State<TopRatedMoviesPage> {
           ),
           Expanded(
             child: PagedListView<int, Movie>(
-              pagingController: _moviesViewModel.pagingController,
+              pagingController: _viewModel.pagingController,
               builderDelegate: PagedChildBuilderDelegate<Movie>(
                 itemBuilder: (context, movie, index) {
                   if (_selectedGenreId == null ||
@@ -163,7 +160,7 @@ class TopRatedMoviesPageState extends State<TopRatedMoviesPage> {
 
   @override
   void dispose() {
-    _genresViewModel.dispose();
+    _viewModel.dispose();
     super.dispose();
   }
 }

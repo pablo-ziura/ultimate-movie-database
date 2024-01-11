@@ -4,6 +4,7 @@ import 'package:ultimate_movie_database/model/movie.dart';
 import 'package:ultimate_movie_database/ui/model/resource_state.dart';
 import 'package:ultimate_movie_database/ui/navigation/navigation_routes.dart';
 import 'package:ultimate_movie_database/ui/views/favorite_movies/viewmodel/favorite_movies_view_model.dart';
+import 'package:ultimate_movie_database/ui/widgets/error/error_view.dart';
 import 'package:ultimate_movie_database/ui/widgets/movie_list_item/movie_list_item.dart';
 
 class FavoriteMovies extends StatefulWidget {
@@ -15,10 +16,27 @@ class FavoriteMovies extends StatefulWidget {
 
 class _FavoriteMoviesState extends State<FavoriteMovies> {
   final FavoriteMoviesViewModel _viewModel = inject<FavoriteMoviesViewModel>();
+  List<Movie> _movies = [];
 
   @override
   void initState() {
     super.initState();
+    _viewModel.getMoviesFromWatchListState.stream.listen((state) {
+      switch (state.status) {
+        case Status.LOADING:
+          break;
+        case Status.SUCCESS:
+          setState(() {
+            _movies = state.data!;
+          });
+          break;
+        case Status.ERROR:
+          ErrorView.show(context, state.exception!.toString(), () {
+            _viewModel.fetchMoviesFromWatchList();
+          });
+          break;
+      }
+    });
     _viewModel.fetchMoviesFromWatchList();
   }
 
@@ -57,31 +75,15 @@ class _FavoriteMoviesState extends State<FavoriteMovies> {
           ),
           const SizedBox(height: 25),
           Expanded(
-            child: StreamBuilder<ResourceState<List<Movie>>>(
-              stream: _viewModel.getMoviesFromWatchListState.stream,
-              builder: (context, snapshot) {
-                if (snapshot.data?.status == Status.LOADING) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.data?.status == Status.SUCCESS) {
-                  return ListView.builder(
-                    itemCount: snapshot.data?.data?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      final movie = snapshot.data!.data![index];
-                      return MovieListItem(
-                        movie: movie,
-                        navigationRoute:
-                            NavigationRoutes.FAVORITE_MOVIES_MOVIE_DETAIL_ROUTE,
-                      );
-                    },
-                  );
-                } else if (snapshot.data?.status == Status.ERROR) {
-                  return Center(
-                    child:
-                        Text('Error: ${snapshot.data?.exception.toString()}'),
-                  );
-                } else {
-                  return const Center(child: Text('No movies found'));
-                }
+            child: ListView.builder(
+              itemCount: _movies.length,
+              itemBuilder: (context, index) {
+                final movie = _movies[index];
+                return MovieListItem(
+                  movie: movie,
+                  navigationRoute:
+                      NavigationRoutes.FAVORITE_MOVIES_MOVIE_DETAIL_ROUTE,
+                );
               },
             ),
           ),

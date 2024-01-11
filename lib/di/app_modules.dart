@@ -9,8 +9,7 @@ import 'package:ultimate_movie_database/data/remote/network_client.dart';
 import 'package:ultimate_movie_database/domain/genres_repository.dart';
 import 'package:ultimate_movie_database/domain/movies_repository.dart';
 import 'package:ultimate_movie_database/ui/views/favorite_movies/viewmodel/favorite_movies_view_model.dart';
-import 'package:ultimate_movie_database/ui/views/genres_movies/viewmodel/genres_view_model.dart';
-import 'package:ultimate_movie_database/ui/views/genres_movies/viewmodel/top_rated_movies_view_model.dart';
+import 'package:ultimate_movie_database/ui/views/top_rated_movies/viewmodel/top_rated_movies_view_model.dart';
 import 'package:ultimate_movie_database/ui/views/movie_detail/viewmodel/movie_detail_view_model.dart';
 import 'package:ultimate_movie_database/ui/views/search_page/viewmodel/search_page_view_model.dart';
 import 'package:ultimate_movie_database/ui/views/trending_movies/viewmodel/trending_movies_view_model.dart';
@@ -21,7 +20,6 @@ class AppModules {
   Future<void> setup() async {
     _setupMainModule();
     await _setupMoviesModule();
-    _setupGenresModule();
   }
 
   void _setupMainModule() {
@@ -32,6 +30,10 @@ class AppModules {
   }
 
   Future<void> _setupMoviesModule() async {
+    inject.registerFactory(() => GenresRemoteImpl(networkClient: inject.get()));
+    inject.registerFactory<GenresRepository>(
+        () => GenresDataImpl(remoteImpl: inject.get()));
+
     inject.registerFactory(() => MoviesRemoteImpl(networkClient: inject.get()));
     await inject.isReady<SharedPreferences>();
     inject.registerFactory(() => MoviesLocalImpl(prefs: inject.get()));
@@ -47,19 +49,11 @@ class AppModules {
         () => TrendingMoviesViewModel(moviesRepository: inject.get()));
     inject.registerFactory(
         () => SearchMovieViewModel(moviesRepository: inject.get()));
-    inject.registerFactory(
-        () => TopRatedMoviesViewModel(moviesRepository: inject.get()));
+    inject.registerFactory(() => TopRatedMoviesViewModel(
+        moviesRepository: inject.get(), genresRepository: inject.get()));
     inject.registerFactory(
         () => FavoriteMoviesViewModel(moviesRepository: inject.get()));
     inject.registerFactory(() => MovieDetailViewModel(
         moviesRepository: inject.get(), genresRepository: inject.get()));
-  }
-
-  void _setupGenresModule() {
-    inject.registerFactory(() => GenresRemoteImpl(networkClient: inject.get()));
-    inject.registerFactory<GenresRepository>(
-        () => GenresDataImpl(remoteImpl: inject.get()));
-    inject
-        .registerFactory(() => GenresViewModel(genresRepository: inject.get()));
   }
 }
