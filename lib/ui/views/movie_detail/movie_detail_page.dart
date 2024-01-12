@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:provider/provider.dart';
 import 'package:ultimate_movie_database/data/remote/network_constants.dart';
 import 'package:ultimate_movie_database/di/app_modules.dart';
 import 'package:ultimate_movie_database/model/genre.dart';
 import 'package:ultimate_movie_database/model/movie.dart';
 import 'package:ultimate_movie_database/ui/model/resource_state.dart';
+import 'package:ultimate_movie_database/ui/provider/favorite_list_provider.dart';
 import 'package:ultimate_movie_database/ui/views/movie_detail/viewmodel/movie_detail_view_model.dart';
 import 'package:ultimate_movie_database/ui/widgets/error/error_view.dart';
 import 'package:ultimate_movie_database/ui/widgets/loading/loading_view.dart';
@@ -56,11 +58,15 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     setState(() {});
   }
 
-  void _toggleWatchList() {
+  Future<void> _toggleWatchList() async {
+    final provider = Provider.of<FavoriteListProvider>(context, listen: false);
+
     if (_isInWatchList) {
       _viewModel.removeFromWatchList(widget.movie);
+      await provider.removeFromWatchList(widget.movie);
     } else {
       _viewModel.addToWatchList(widget.movie);
+      await provider.addToWatchList(widget.movie);
     }
     setState(() {
       _isInWatchList = !_isInWatchList;

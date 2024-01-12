@@ -10,6 +10,7 @@ import 'package:ultimate_movie_database/ui/model/resource_state.dart';
 class MovieDetailViewModel extends BaseViewModel {
   final MoviesRepository _moviesRepository;
   final GenresRepository _genresRepository;
+
   List<Genre> genresList = [];
   List<Movie> _watchListMovies = [];
 
