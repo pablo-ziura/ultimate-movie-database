@@ -5,6 +5,7 @@ class NetworkConstants {
   static const WEEK_TRENDING_MOVIES_URL = "$BASE_URL/trending/movie/week";
   static const MOVIE_CATEGORIES_URL = "$BASE_URL/genre/movie/list";
   static const SEARCH_MOVIE_URL = "$BASE_URL/search/movie";
+  static const TOP_MOVIES_URL = "$BASE_URL/movie/top_rated";
 
   static const BASE_URL_IMAGE = "https://image.tmdb.org/t/p/original";
   static const API_KEY = "17cee1d344fb0f1d3dcc3f4b904ef116";

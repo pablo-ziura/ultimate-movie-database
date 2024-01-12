@@ -16,6 +16,9 @@ class MovieRemoteMapper {
       genreIds: remoteModel.genreIds,
       popularity: remoteModel.popularity,
       video: remoteModel.video,
+      budget: remoteModel.budget,
+      revenue: remoteModel.revenue,
+      runtime: remoteModel.runtime,
     );
   }
 }

@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ultimate_movie_database/di/app_modules.dart';
+import 'package:ultimate_movie_database/domain/movies_repository.dart';
 import 'package:ultimate_movie_database/ui/navigation/navigation_routes.dart';
+import 'package:ultimate_movie_database/ui/provider/favorite_list_provider.dart';
 
-void main() {
-  AppModules().setup();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AppModules().setup();
   runApp(const MainApp());
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  const MainApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: router,
+    return ChangeNotifierProvider(
+      create: (context) => FavoriteListProvider(inject.get<MoviesRepository>()),
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        routerConfig: router,
+      ),
     );
   }
 }

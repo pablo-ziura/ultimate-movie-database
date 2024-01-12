@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -8,8 +9,8 @@ import 'package:ultimate_movie_database/model/movie.dart';
 import 'package:ultimate_movie_database/ui/model/resource_state.dart';
 import 'package:ultimate_movie_database/ui/navigation/navigation_routes.dart';
 import 'package:ultimate_movie_database/ui/views/trending_movies/viewmodel/trending_movies_view_model.dart';
-import 'package:ultimate_movie_database/ui/widget/error/error_view.dart';
-import 'package:ultimate_movie_database/ui/widget/loading/loading_view.dart';
+import 'package:ultimate_movie_database/ui/widgets/error/error_view.dart';
+import 'package:ultimate_movie_database/ui/widgets/loading/loading_view.dart';
 
 class TrendingMoviesPage extends StatefulWidget {
   const TrendingMoviesPage({super.key});
@@ -114,8 +115,16 @@ class _TrendingMoviesPageState extends State<TrendingMoviesPage> {
 
     Widget imageWidget;
     if (movie.posterPath != null && movie.posterPath!.isNotEmpty) {
-      imageWidget = Image.network(
-        NetworkConstants.BASE_URL_IMAGE + movie.posterPath!,
+      imageWidget = CachedNetworkImage(
+        imageUrl: NetworkConstants.BASE_URL_IMAGE + movie.posterPath!,
+        placeholder: (context, url) => const Center(
+          child: SizedBox(
+            width: 30.0,
+            height: 30.0,
+            child: CircularProgressIndicator(),
+          ),
+        ),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
         fit: BoxFit.cover,
         width: screenWidth,
         height: screenHeight,

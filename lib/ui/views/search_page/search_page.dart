@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:ultimate_movie_database/data/remote/network_constants.dart';
 import 'package:ultimate_movie_database/di/app_modules.dart';
 import 'package:ultimate_movie_database/model/movie.dart';
 import 'package:ultimate_movie_database/ui/model/resource_state.dart';
 import 'package:ultimate_movie_database/ui/navigation/navigation_routes.dart';
 import 'package:ultimate_movie_database/ui/views/search_page/viewmodel/search_page_view_model.dart';
-import 'package:ultimate_movie_database/ui/widget/error/error_view.dart';
-import 'package:ultimate_movie_database/ui/widget/loading/loading_view.dart';
+import 'package:ultimate_movie_database/ui/widgets/error/error_view.dart';
+import 'package:ultimate_movie_database/ui/widgets/loading/loading_view.dart';
+import 'package:ultimate_movie_database/ui/widgets/movie_list_item/movie_list_item.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -98,7 +97,8 @@ class _SearchPageState extends State<SearchPage> {
           ),
           const SizedBox(height: 25),
           Container(
-            padding: const EdgeInsetsDirectional.all(15),
+            padding: const EdgeInsetsDirectional.symmetric(
+                horizontal: 50, vertical: 15),
             child: TextField(
               controller: _movieTitleController,
               decoration: const InputDecoration(
@@ -116,52 +116,17 @@ class _SearchPageState extends State<SearchPage> {
             child: PagedListView<int, Movie>(
               pagingController: _viewModel.pagingController,
               builderDelegate: PagedChildBuilderDelegate<Movie>(
-                itemBuilder: (context, item, index) =>
-                    _buildMovieListItem(item),
-                noItemsFoundIndicatorBuilder: (context) => Container(),
+                itemBuilder: (context, movie, index) {
+                  return MovieListItem(
+                    movie: movie,
+                    navigationRoute:
+                        NavigationRoutes.SEARCH_PAGE_MOVIE_DETAIL_ROUTE,
+                  );
+                },
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildMovieListItem(Movie movie) {
-    Widget imageWidget;
-    if (movie.backdropPath != null && movie.backdropPath!.isNotEmpty) {
-      imageWidget = Image.network(
-        NetworkConstants.BASE_URL_IMAGE + movie.backdropPath!,
-        fit: BoxFit.cover,
-        height: 150,
-        width: 100,
-      );
-    } else {
-      imageWidget = Image.asset(
-        'assets/img/image_not_available.png',
-        fit: BoxFit.cover,
-        height: 150,
-        width: 100,
-      );
-    }
-
-    return InkWell(
-      onTap: () {
-        context.go(NavigationRoutes.SEARCH_PAGE_MOVIE_DETAIL_ROUTE,
-            extra: movie);
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: ListTile(
-          title: Text(
-            movie.title,
-            style: const TextStyle(color: Colors.white),
-          ),
-          leading: ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
-            child: imageWidget,
-          ),
-        ),
       ),
     );
   }
