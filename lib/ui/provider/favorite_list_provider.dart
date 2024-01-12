@@ -1,28 +1,29 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:ultimate_movie_database/domain/movies_repository.dart';
 import 'package:ultimate_movie_database/model/movie.dart';
+import 'package:ultimate_movie_database/ui/model/resource_state.dart';
 
 class FavoriteListProvider extends ChangeNotifier {
   List<Movie> _movies = [];
   List<Movie> get movies => _movies;
 
   final MoviesRepository _moviesRepository;
-  bool _isLoading = false;
+  final StreamController<ResourceState<List<Movie>>> _moviesStreamController =
+      StreamController.broadcast();
+  Stream<ResourceState<List<Movie>>> get moviesStream =>
+      _moviesStreamController.stream;
 
   FavoriteListProvider(this._moviesRepository);
 
-  bool get isLoading => _isLoading;
-
   Future<void> fetchMoviesFromWatchList() async {
-    _isLoading = true;
-
+    _moviesStreamController.add(ResourceState.loading());
     try {
       _movies = await _moviesRepository.getMoviesFromWatchList();
+      _moviesStreamController.add(ResourceState.success(_movies));
     } catch (e) {
-      print('Error fetching movies: $e');
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+      _moviesStreamController.add(ResourceState.error(Exception(e.toString())));
     }
   }
 
@@ -31,7 +32,7 @@ class FavoriteListProvider extends ChangeNotifier {
       await _moviesRepository.addToWatchList(movie);
       await fetchMoviesFromWatchList();
     } catch (e) {
-      print('Error adding movie to watch list: $e');
+      _moviesStreamController.add(ResourceState.error(Exception(e.toString())));
     }
   }
 
@@ -40,7 +41,13 @@ class FavoriteListProvider extends ChangeNotifier {
       await _moviesRepository.removeFromWatchList(movie);
       await fetchMoviesFromWatchList();
     } catch (e) {
-      print('Error removing movie from watch list: $e');
+      _moviesStreamController.add(ResourceState.error(Exception(e.toString())));
     }
+  }
+
+  @override
+  void dispose() {
+    _moviesStreamController.close();
+    super.dispose();
   }
 }

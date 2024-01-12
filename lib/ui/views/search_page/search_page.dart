@@ -123,6 +123,7 @@ class _SearchPageState extends State<SearchPage> {
                         NavigationRoutes.SEARCH_PAGE_MOVIE_DETAIL_ROUTE,
                   );
                 },
+                noItemsFoundIndicatorBuilder: (context) => Container(),
               ),
             ),
           ),

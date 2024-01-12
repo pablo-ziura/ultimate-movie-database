@@ -22,7 +22,8 @@ class _HomePageState extends State<HomePage> {
               ),
         ),
         child: NavigationBar(
-          backgroundColor: Colors.black,
+          indicatorColor: Colors.amber,
+          backgroundColor: Colors.orange,
           selectedIndex: widget.navigationShell.currentIndex,
           onDestinationSelected: (value) {
             widget.navigationShell.goBranch(value,
@@ -45,9 +46,9 @@ class _HomePageState extends State<HomePage> {
               label: "Top Movies",
             ),
             NavigationDestination(
-              icon: Icon(Icons.star_outline, color: Colors.white),
-              selectedIcon: Icon(Icons.star, color: Colors.white),
-              label: "Favorite Movies",
+              icon: Icon(Icons.favorite_border_outlined, color: Colors.white),
+              selectedIcon: Icon(Icons.favorite, color: Colors.white),
+              label: "Wish List",
             ),
           ],
         ),
