@@ -1,21 +1,22 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:ultimate_movie_database/di/app_modules.dart';
 import 'package:ultimate_movie_database/domain/movies_repository.dart';
 import 'package:ultimate_movie_database/model/movie.dart';
 import 'package:ultimate_movie_database/ui/model/resource_state.dart';
 
 class FavoriteListProvider extends ChangeNotifier {
-  List<Movie> _movies = [];
-  List<Movie> get movies => _movies;
+  final MoviesRepository _moviesRepository = inject.get<MoviesRepository>();
 
-  final MoviesRepository _moviesRepository;
   final StreamController<ResourceState<List<Movie>>> _moviesStreamController =
       StreamController.broadcast();
+
   Stream<ResourceState<List<Movie>>> get moviesStream =>
       _moviesStreamController.stream;
 
-  FavoriteListProvider(this._moviesRepository);
+  List<Movie> _movies = [];
+  List<Movie> get movies => _movies;
 
   Future<void> fetchMoviesFromWatchList() async {
     _moviesStreamController.add(ResourceState.loading());

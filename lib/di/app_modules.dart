@@ -35,6 +35,7 @@ class AppModules {
 
     inject.registerFactory(() => MoviesRemoteImpl(networkClient: inject.get()));
     await inject.isReady<SharedPreferences>();
+
     inject.registerFactory(() => MoviesLocalImpl(prefs: inject.get()));
 
     inject.registerFactory<MoviesRepository>(
