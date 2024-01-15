@@ -24,7 +24,6 @@ class MovieDetailPage extends StatefulWidget {
 class _MovieDetailPageState extends State<MovieDetailPage> {
   final MovieDetailViewModel _viewModel = inject<MovieDetailViewModel>();
   List<Genre> _genres = [];
-  bool _isInWatchList = false;
   bool _isInit = true;
 
   @override
@@ -62,17 +61,13 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     }
   }
 
-  Future<void> _toggleWatchList(FavoriteListProvider provider) async {
-    if (_isInWatchList) {
-      _viewModel.removeFromWatchList(widget.movie);
+  Future<void> _toggleWatchList(
+      FavoriteListProvider provider, bool isMovieInFavorites) async {
+    if (isMovieInFavorites) {
       await provider.removeFromWatchList(widget.movie);
     } else {
-      _viewModel.addToWatchList(widget.movie);
       await provider.addToWatchList(widget.movie);
     }
-    setState(() {
-      _isInWatchList = !_isInWatchList;
-    });
   }
 
   @override
@@ -123,20 +118,17 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
               ),
             ),
             const SizedBox(height: 10),
-            GestureDetector(
-              onTap: () {
-                _toggleWatchList(provider);
-              },
-              child: StreamBuilder<ResourceState<List<Movie>>>(
+            StreamBuilder<ResourceState<List<Movie>>>(
                 stream: provider.moviesStream,
                 builder: (context, snapshot) {
-                  if (snapshot.data?.status == Status.LOADING) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.data?.status == Status.SUCCESS) {
-                    bool isMovieInFavorites = snapshot.data?.data
-                            ?.any((movie) => movie.id == widget.movie.id) ??
-                        false;
-                    return Row(
+                  bool isMovieInFavorites =
+                      snapshot.data?.data?.any((m) => m.id == movie.id) ??
+                          false;
+                  return GestureDetector(
+                    onTap: () {
+                      _toggleWatchList(provider, isMovieInFavorites);
+                    },
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
@@ -156,23 +148,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                           ),
                         ),
                       ],
-                    );
-                  } else if (snapshot.data?.status == Status.ERROR) {
-                    return GestureDetector(
-                      onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                              'Error: ${snapshot.data?.exception?.toString() ?? 'Unknown error'}'),
-                        ),
-                      ),
-                      child: const Center(child: Text('Failed to load movie')),
-                    );
-                  } else {
-                    return Container();
-                  }
-                },
-              ),
-            ),
+                    ),
+                  );
+                }),
             const SizedBox(height: 30),
             Text(
               movie.overview,
