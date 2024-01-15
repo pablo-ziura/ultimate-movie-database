@@ -1,4 +1,4 @@
-package com.example.ultimate_movie_database
+package com.pabloziura.ultimatemoviedatabase
 
 import io.flutter.embedding.android.FlutterActivity
 
