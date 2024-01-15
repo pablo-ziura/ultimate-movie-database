@@ -25,6 +25,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   final MovieDetailViewModel _viewModel = inject<MovieDetailViewModel>();
   List<Genre> _genres = [];
   bool _isInWatchList = false;
+  bool _isInit = true;
 
   @override
   void initState() {
@@ -49,18 +50,19 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
       }
     });
     _viewModel.fetchMovieGenres();
-
-    _checkIfMovieIsInWatchList();
   }
 
-  void _checkIfMovieIsInWatchList() async {
-    _isInWatchList = await _viewModel.isMovieInWatchList(widget.movie);
-    setState(() {});
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_isInit) {
+      Provider.of<FavoriteListProvider>(context, listen: false)
+          .fetchMoviesFromWatchList();
+      _isInit = false;
+    }
   }
 
-  Future<void> _toggleWatchList() async {
-    final provider = Provider.of<FavoriteListProvider>(context, listen: false);
-
+  Future<void> _toggleWatchList(FavoriteListProvider provider) async {
     if (_isInWatchList) {
       _viewModel.removeFromWatchList(widget.movie);
       await provider.removeFromWatchList(widget.movie);
@@ -75,23 +77,22 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<FavoriteListProvider>(context, listen: false);
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: SingleChildScrollView(
         child: Column(
           children: [
             _buildMovieImage(context, widget.movie),
-            _buildMovieDetails(widget.movie),
+            _buildMovieDetails(widget.movie, provider),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildMovieDetails(Movie movie) {
-    String buttonText =
-        _isInWatchList ? 'Remove from watch list' : 'Add to want to watch list';
-    Color iconColor = _isInWatchList ? Colors.red : Colors.grey;
+  Widget _buildMovieDetails(Movie movie, FavoriteListProvider provider) {
     List<Genre> selectedGenres =
         _genres.where((genre) => movie.genreIds.contains(genre.id)).toList();
 
@@ -124,21 +125,52 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             const SizedBox(height: 10),
             GestureDetector(
               onTap: () {
-                _toggleWatchList();
+                _toggleWatchList(provider);
               },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.favorite, color: iconColor),
-                  const SizedBox(width: 5),
-                  Text(
-                    buttonText,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.blueGrey,
-                    ),
-                  ),
-                ],
+              child: StreamBuilder<ResourceState<List<Movie>>>(
+                stream: provider.moviesStream,
+                builder: (context, snapshot) {
+                  if (snapshot.data?.status == Status.LOADING) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.data?.status == Status.SUCCESS) {
+                    bool isMovieInFavorites = snapshot.data?.data
+                            ?.any((movie) => movie.id == widget.movie.id) ??
+                        false;
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          isMovieInFavorites
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: isMovieInFavorites ? Colors.red : Colors.grey,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          isMovieInFavorites
+                              ? 'Remove from watch list'
+                              : 'Add to want to watch list',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.blueGrey,
+                          ),
+                        ),
+                      ],
+                    );
+                  } else if (snapshot.data?.status == Status.ERROR) {
+                    return GestureDetector(
+                      onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              'Error: ${snapshot.data?.exception?.toString() ?? 'Unknown error'}'),
+                        ),
+                      ),
+                      child: const Center(child: Text('Failed to load movie')),
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
               ),
             ),
             const SizedBox(height: 30),
