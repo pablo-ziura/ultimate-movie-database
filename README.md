@@ -23,11 +23,11 @@ Diseñada para ser intuitiva y fácil de usar, Ultimate Movie Database se convie
 ## Capturas de pantalla
 
 <p align="center">
-  <img src="assets/img/screenshoots/screen_001.png" alt="Screenshot 01" width="150">
-  <img src="assets/img/screenshoots/screen_002.png" alt="Screenshot 02" width="150">
-  <img src="assets/img/screenshoots/screen_003.png" alt="Screenshot 03" width="150">
-  <img src="assets/img/screenshoots/screen_004.png" alt="Screenshot 04" width="150">
-  <img src="assets/img/screenshoots/screen_005.png" alt="Screenshot 05" width="150">
+  <img src="assets/img/screenshots/screen_001.png" alt="Screenshot 01" width="150">
+  <img src="assets/img/screenshots/screen_002.png" alt="Screenshot 02" width="150">
+  <img src="assets/img/screenshots/screen_003.png" alt="Screenshot 03" width="150">
+  <img src="assets/img/screenshots/screen_004.png" alt="Screenshot 04" width="150">
+  <img src="assets/img/screenshots/screen_005.png" alt="Screenshot 05" width="150">
 </p>
 
 ## Estructura del Proyecto
