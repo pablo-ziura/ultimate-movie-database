@@ -8,7 +8,7 @@ Sumérgete en el universo cinematográfico con Ultimate Movie Database, la aplic
 
 ## Descripción General
 
-Ultimate Movie Database está diseñada **Flutter**, siguiendo una **Arquitectura Clean** y **principios SOLID**, además de un **patrón MVVM** para la UI, permitiendo una separación clara entre la presentación y la lógica de negocio, con la ayuda de la inyección de dependencias proporcionada por `GetIt`. Utiliza librerías de vanguardia como `Dio` para las comunicaciones de red, `SharedPreferences` para el almacenamiento local y `GoRouter` para una navegación fluida.
+Ultimate Movie Database está diseñada con **Flutter**, siguiendo una **Arquitectura Clean** y **principios SOLID**, además de un **patrón MVVM** para la UI, permitiendo una separación clara entre la presentación y la lógica de negocio, con la ayuda de la inyección de dependencias proporcionada por `GetIt`. Utiliza librerías de vanguardia como `Dio` para las comunicaciones de red, `SharedPreferences` para el almacenamiento local y `GoRouter` para una navegación fluida.
 
 Este proyecto utiliza la [API de The Movie Database (TMDB)](https://developer.themoviedb.org/docs/getting-started), una fuente de información sobre películas, programas de televisión, actores e imágenes relacionadas con el cine y la televisión. Esta API es fundamental para ofrecer a los usuarios acceso a una extensa base de datos de contenido cinematográfico.
 
