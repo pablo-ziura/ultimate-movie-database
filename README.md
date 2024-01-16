@@ -1,12 +1,14 @@
 # Ultimate Movie Database
 
-![Logo de Ultimate Movie Database](assets/img/logo/app_logo_icon.png)
+<p align="center">
+  <img src="assets/img/logo/app_logo_icon.png" alt="Logo de Ultimate Movie Database" width="200">
+</p>
 
 Sumérgete en el universo cinematográfico con Ultimate Movie Database, la aplicación para explorar el mundo del cine.
 
 ## Descripción General
 
-Ultimate Movie Database está diseñada **Flutter**, siguiendo una **Arquitectura Clean** y **principios SOLID**, además de un **patrón MVVM** para la UI, permitiendo una separación clara entre la presentación y la lógica de negocio, con la ayuda de la inyección de dependencias proporcionada por `GetIt`.. Utiliza librerías de vanguardia como `Dio` para las comunicaciones de red, `SharedPreferences` para el almacenamiento local y `GoRouter` para una navegación fluida.
+Ultimate Movie Database está diseñada **Flutter**, siguiendo una **Arquitectura Clean** y **principios SOLID**, además de un **patrón MVVM** para la UI, permitiendo una separación clara entre la presentación y la lógica de negocio, con la ayuda de la inyección de dependencias proporcionada por `GetIt`. Utiliza librerías de vanguardia como `Dio` para las comunicaciones de red, `SharedPreferences` para el almacenamiento local y `GoRouter` para una navegación fluida.
 
 Este proyecto utiliza la [API de The Movie Database (TMDB)](https://developer.themoviedb.org/docs/getting-started), una fuente de información sobre películas, programas de televisión, actores e imágenes relacionadas con el cine y la televisión. Esta API es fundamental para ofrecer a los usuarios acceso a una extensa base de datos de contenido cinematográfico.
 
@@ -78,7 +80,7 @@ Para utilizar la API de TMDB en tu propio entorno de desarrollo, necesitarás re
 
 ## Play Store
 
-Sigue estos pasos para configurar el entorno de desarrollo y ejecutar la aplicación: [Ficha Play Store](https://flutter.dev)
+Puedes instalar y ejecutar la aplicación desde la Play Store: [Ficha Play Store](https://flutter.dev)
 
 ## Licencia
 
