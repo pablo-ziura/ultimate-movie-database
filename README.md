@@ -86,7 +86,7 @@ Para utilizar la API de TMDB en tu propio entorno de desarrollo, necesitarás re
 
 ## Play Store
 
-Puedes instalar y ejecutar la aplicación desde la Play Store: [Ficha Play Store](https://flutter.dev)
+Puedes instalar y ejecutar la aplicación desde la Play Store: [Ficha Play Store](https://play.google.com/store/apps/details?id=com.pabloziura.ultimatemoviedatabase)
 
 ## Licencia
 
