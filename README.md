@@ -65,15 +65,19 @@ Estas herramientas y librerías se han seleccionado cuidadosamente para trabajar
 Sigue estos pasos para configurar el entorno de desarrollo y ejecutar la aplicación:
 
 ### Clona el repositorio de GitHub
-git clone https://github.com/pablo-ziura/ultimate-movie-database.git
+
+git clone <https://github.com/pablo-ziura/ultimate-movie-database.git>
 
 ### Navega al directorio del proyecto clonado
+
 cd ultimate-movie-database
 
 ### Instala las dependencias del proyecto
+
 flutter pub get
 
 ### Ejecuta la aplicación en modo de desarrollo
+
 flutter run
 
 ### Registro y Uso de la API
@@ -86,4 +90,4 @@ Puedes instalar y ejecutar la aplicación desde la Play Store: [Ficha Play Store
 
 ## Licencia
 
-Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para detalles.
+Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para más detalles.
